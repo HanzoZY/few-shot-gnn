@@ -81,7 +81,7 @@ def train():
         with tf.variable_scope("networks", reuse=True):
             valid_embed_network = OmniglotEmbedNetwork(valid_batch_tensors, hparams.batch_size)
             valid_gnn= GNN_FSL(hparams, valid_embed_network.output, valid_embed_network.label_placeholder, False)
-        params_to_str = f"M_Nets_{hparams.input_dim}_{hparams.lr}_{hparams.n}_{hparams.k}_{hparams.num_gcn_blocks}_{hparams.label_cut}_{hparams.nn_option}"
+        params_to_str = f"GNN_{hparams.input_dim}_{hparams.lr}_{hparams.n}_{hparams.k}_{hparams.num_gcn_blocks}_{hparams.label_cut}_{hparams.nn_option}"
         log_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", params_to_str))
         # Summaries
         tf.summary.scalar("train_loss", gnn.loss)
