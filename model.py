@@ -61,7 +61,8 @@ class GNN_FSL:
         if self.label_cut=='yes':
             print('use cut')
             self.predict_label = label_store[:, -1, :]
-        else:self.predict_label=data_store[:,-1,:]
+        elif self.label_cut=='no':self.predict_label=data_store[:,-1,:]
+        else:self.predict_label=self._add_nn_block(x=tf.concat([data_store[:,-1,:],label_store[:,-1,:]],axis=-1), out_channel=self.num_classes)
         self.propagation = propagation_store
         ce_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.target_label,logits=self.predict_label))
         self.loss = ce_loss
@@ -90,10 +91,11 @@ class GNN_FSL:
         #修改
 
         # Laplacian=self._get_Laplacian(adjacency=adjacency)
+        """equals to using Laplacian matrix"""
         Laplacian = adjacency
-        # propagation=self._get_propagation(Laplacian=Laplacian)
+        propagation=self._get_propagation(Laplacian=Laplacian)
         # propagation =tf.nn.softmax(Laplacian)
-        propagation =Laplacian
+        # propagation =Laplacian
         # self.simi=simi
         # propagation = adjacency
         data_out=tf.matmul(propagation,input_data)
@@ -321,7 +323,7 @@ def _GNN_test():
     hparams.seq_len = hparams.n*hparams.k+1
     hparams.lr = 1e-3
     hparams.hop=1
-    hparams.label_cut = 'yes'
+    hparams.label_cut = 'mix'
     # np.set_printoptions(threshold='nan')  # 全部输出
 
     with tf.Graph().as_default():
